@@ -1,0 +1,229 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<style>
+    /* Принудительно отключаем темную тему браузера */
+    :root {
+        color-scheme: light !important;
+    }
+    html {
+        color-scheme: light !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Принудительная светлая тема для всех элементов */
+    * {
+        color-scheme: light !important;
+    }
+    
+    /* Основной фон страницы */
+    body {
+        background-color: #fff !important;
+        color: #333 !important;
+    }
+    
+    /* Контентная область */
+    #content {
+        background-color: #fff !important;
+        color: #333 !important;
+    }
+    
+    /* Заголовок админки */
+    #header {
+        background-color: #417690 !important;
+        color: #fff !important;
+    }
+    
+    #header a:link, #header a:visited {
+        color: #fff !important;
+    }
+    
+    #header a:hover {
+        color: #f5dd5d !important;
+    }
+    
+    /* Навигация */
+    #nav-global {
+        background-color: #417690 !important;
+    }
+    
+    /* Модули и карточки */
+    .module {
+        background: #fff !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    .module h2 {
+        background: #417690 !important;
+        color: #fff !important;
+        border-bottom: 1px solid #417690 !important;
+    }
+    
+    .module h2 a {
+        color: #fff !important;
+    }
+    
+    /* Таблицы */
+    #result_list {
+        background-color: #fff !important;
+    }
+    
+    #result_list thead th {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+        border-bottom: 2px solid #ddd !important;
+    }
+    
+    #result_list tbody tr {
+        background-color: #fff !important;
+        color: #333 !important;
+    }
+    
+    #result_list tbody tr:nth-child(even) {
+        background-color: #f8f9fa !important;
+    }
+    
+    #result_list tbody tr:hover {
+        background-color: #e9ecef !important;
+    }
+    
+    #result_list tbody td {
+        color: #333 !important;
+    }
+    
+    #result_list tbody a {
+        color: #417690 !important;
+    }
+    
+    /* Формы */
+    .form-row {
+        background-color: #fff !important;
+    }
+    
+    .form-row label {
+        color: #333 !important;
+    }
+    
+    input[type=text], input[type=password], input[type=email], input[type=url], 
+    input[type=number], input[type=date], input[type=datetime-local], 
+    textarea, select {
+        background-color: #fff !important;
+        color: #333 !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    /* Кнопки */
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background-color: #417690 !important;
+        color: #fff !important;
+        border: 1px solid #417690 !important;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover, a.button:hover {
+        background-color: #205067 !important;
+        border-color: #205067 !important;
+    }
+    
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background-color: #417690 !important;
+    }
+    
+    /* Ссылки */
+    a:link, a:visited {
+        color: #417690 !important;
+    }
+    
+    a:hover {
+        color: #205067 !important;
+    }
+    
+    /* Текст */
+    p, li, td, th, div, span {
+        color: #333 !important;
+    }
+    
+    /* Карточки статистики */
+    .stat-card {
+        background: #fff !important;
+        color: #333 !important;
+        border: 1px solid #e0e0e0 !important;
+    }
+    
+    .stat-card h3 {
+        color: #333 !important;
+    }
+    
+    .stat-label {
+        color: #666 !important;
+    }
+    
+    .stat-value {
+        color: #333 !important;
+    }
+    
+    /* Дашборд */
+    .dashboard-header h1 {
+        color: #333 !important;
+    }
+    
+    .dashboard-header p {
+        color: #666 !important;
+    }
+    
+    .dashboard-section h2 {
+        color: #333 !important;
+    }
+    
+    /* Сообщения */
+    .messagelist li {
+        background-color: #fff !important;
+        color: #333 !important;
+    }
+    
+    .messagelist li.success {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
+    
+    .messagelist li.error {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+    }
+    
+    /* Фильтры */
+    #changelist-filter {
+        background-color: #fff !important;
+        border-left: 1px solid #ddd !important;
+    }
+    
+    #changelist-filter h2 {
+        background-color: #f8f9fa !important;
+        color: #333 !important;
+    }
+    
+    #changelist-filter h3 {
+        color: #333 !important;
+    }
+    
+    #changelist-filter a {
+        color: #417690 !important;
+    }
+</style>
+{% endblock %}
+

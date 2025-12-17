@@ -1,0 +1,82 @@
+services:
+  # Backend (FastAPI) - Dev режим
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sparks-backend-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_PATH=/app/data/sparks.db
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - APP_URL=${APP_URL:-http://localhost:5173}
+      - TON_WALLET_ADDRESS=${TON_WALLET_ADDRESS:-}
+      - TON_API_URL=${TON_API_URL:-https://tonapi.io/v2}
+      - TON_API_KEY=${TON_API_KEY:-}
+      - TON_NETWORK=${TON_NETWORK:-testnet}
+      - TON_SIMULATE_PAYMENTS=${TON_SIMULATE_PAYMENTS:-true}
+      - TON_MIN_AMOUNT_NANOTONS=${TON_MIN_AMOUNT_NANOTONS:-100000000}
+      - MYMEMORY_API_KEY=${MYMEMORY_API_KEY:-}
+      - TIMEZONE=${TIMEZONE:-Europe/Moscow}
+      - API_V1_PREFIX=${API_V1_PREFIX:-/api/v1}
+    volumes:
+      - database_data:/app/data
+      - ./backend:/app
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    restart: unless-stopped
+    networks:
+      - sparks-network
+
+  # Frontend (React/Vite) - Dev режим
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: sparks-frontend-dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - sparks-network
+
+  # Admin (Django) - Dev режим
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: sparks-admin-dev
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_PATH=/app/data/sparks.db
+      - SECRET_KEY=${DJANGO_SECRET_KEY:-django-insecure-dev-key}
+      - DEBUG=${DJANGO_DEBUG:-True}
+    volumes:
+      - database_data:/app/data
+      - ./admin:/app
+    depends_on:
+      - backend
+    command: >
+      sh -c "python manage.py migrate --run-syncdb &&
+             python manage.py runserver 0.0.0.0:8001"
+    restart: unless-stopped
+    networks:
+      - sparks-network
+    profiles:
+      - admin
+
+volumes:
+  database_data:
+    driver: local
+
+networks:
+  sparks-network:
+    driver: bridge

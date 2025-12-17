@@ -1,0 +1,94 @@
+services:
+  # Backend (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sparks-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_PATH=/app/data/sparks.db
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - APP_URL=${APP_URL:-http://localhost}
+      - TON_WALLET_ADDRESS=${TON_WALLET_ADDRESS:-}
+      - TON_API_URL=${TON_API_URL:-https://tonapi.io/v2}
+      - TON_API_KEY=${TON_API_KEY:-}
+      - TON_NETWORK=${TON_NETWORK:-mainnet}
+      - TON_SIMULATE_PAYMENTS=${TON_SIMULATE_PAYMENTS:-false}
+      - TON_MIN_AMOUNT_NANOTONS=${TON_MIN_AMOUNT_NANOTONS:-100000000}
+      - MYMEMORY_API_KEY=${MYMEMORY_API_KEY:-}
+      - TIMEZONE=${TIMEZONE:-Europe/Moscow}
+      - API_V1_PREFIX=${API_V1_PREFIX:-/api/v1}
+    volumes:
+      - database_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - sparks-network
+
+  # Frontend (React/Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sparks-frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://backend:8000}
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - sparks-network
+
+  # Admin (Django)
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: sparks-admin
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_PATH=/app/data/sparks.db
+      - SECRET_KEY=${DJANGO_SECRET_KEY:-django-insecure-change-in-production}
+      - DEBUG=${DJANGO_DEBUG:-False}
+    volumes:
+      - database_data:/app/data
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate --run-syncdb &&
+             python manage.py collectstatic --noinput &&
+             python manage.py runserver 0.0.0.0:8001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/admin/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - sparks-network
+
+volumes:
+  database_data:
+    driver: local
+
+networks:
+  sparks-network:
+    driver: bridge

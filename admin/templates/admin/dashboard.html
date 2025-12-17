@@ -1,0 +1,73 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Дашборд{% endblock %}
+
+{% block content %}
+<h1>Дашборд</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+    
+    <!-- Статистика выполненных задач -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff;">
+        <h2 style="margin-top: 0; color: #007bff;">Выполненные задачи</h2>
+        <div style="margin-top: 15px;">
+            <div style="margin-bottom: 10px;">
+                <strong>За сегодня:</strong>
+                <span style="font-size: 24px; color: #007bff; margin-left: 10px;">{{ stats.completed_today }}</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong>За вчера:</strong>
+                <span style="font-size: 20px; color: #6c757d; margin-left: 10px;">{{ stats.completed_yesterday }}</span>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong>За неделю:</strong>
+                <span style="font-size: 20px; color: #6c757d; margin-left: 10px;">{{ stats.completed_week }}</span>
+            </div>
+            <div>
+                <strong>За месяц:</strong>
+                <span style="font-size: 20px; color: #6c757d; margin-left: 10px;">{{ stats.completed_month }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Статистика пользователей -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
+        <h2 style="margin-top: 0; color: #28a745;">Пользователи</h2>
+        <div style="margin-top: 15px;">
+            <div style="margin-bottom: 10px;">
+                <strong>Всего пользователей:</strong>
+                <span style="font-size: 24px; color: #28a745; margin-left: 10px;">{{ stats.total_users }}</span>
+            </div>
+            <div>
+                <strong>Активных за сегодня:</strong>
+                <span style="font-size: 20px; color: #6c757d; margin-left: 10px;">{{ stats.active_users_today }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Статистика заданий -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;">
+        <h2 style="margin-top: 0; color: #ffc107;">Задания</h2>
+        <div style="margin-top: 15px;">
+            <div style="margin-bottom: 10px;">
+                <strong>Всего заданий:</strong>
+                <span style="font-size: 24px; color: #ffc107; margin-left: 10px;">{{ stats.total_tasks }}</span>
+            </div>
+            <div>
+                <strong>Активных заданий:</strong>
+                <span style="font-size: 20px; color: #6c757d; margin-left: 10px;">{{ stats.active_tasks }}</span>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'admin:index' %}" class="button" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
+        Перейти к моделям
+    </a>
+</div>
+
+{% endblock %}
+

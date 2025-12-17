@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@ton/core": "^0.62.0",
+    "react-qr-code": "^2.0.18"
+  }
+}
